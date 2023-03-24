@@ -1,9 +1,9 @@
 # biz24
 
-# back
-# npm init
-# npm run start
+#back
+#npm init
+#npm run start
 
 #front
-# npm init
-# npm run serve
+#npm init
+#npm run serve
