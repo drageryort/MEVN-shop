@@ -4,7 +4,7 @@ export default createStore({
   state: {
     productCardsList: [],
     productCard: {},
-    filterListData: {}
+    filtersList: {}
   },
   getters: {
     productCardsList(state) {
@@ -13,21 +13,23 @@ export default createStore({
     productCard(state) {
       return state.productCard;
     },
-    filterCategoriesList(state) {
-      return state.filterListData;
+    filtersList(state) {
+      return state.filtersList;
     }
   },
   mutations: {
     fetchProductCardsList(state, productCardsList) {
       state.productCardsList = productCardsList;
     },
-    fetchFilterCategoriesList(state, {productCardsList, queryParams}) {
-      const filterListData = {};
-      filterListData.list = {};
+    fetchFiltersList(state, {filtersListData, queryParams}) {
+      const filtersList = {};
+      filtersList.list = {};
 
+      console.log(filtersListData)
 
-      const categoryFilterListData = productCardsList.map(el => el['commonParams']['category']);
-      filterListData['list']['category'] = (Array.from([...new Set(categoryFilterListData)])).map(el => {
+      const categoryFilterListData = filtersListData.map(el => el['category']);
+
+      filtersList['list']['category'] = (Array.from([...new Set(categoryFilterListData)])).map(el => {
           if(queryParams['category'] && queryParams['category'].includes(el)){
             return {
               value:el,
@@ -40,8 +42,9 @@ export default createStore({
           }
       });
 
-      const brandFilterListData = productCardsList.map(el => el['commonParams']['brand']);
-      filterListData['list']['brand'] = (Array.from([...new Set(brandFilterListData)])).map(el => {
+      const brandFilterListData = filtersListData.map(el => el['brand']);
+
+      filtersList['list']['brand'] = (Array.from([...new Set(brandFilterListData)])).map(el => {
         if(queryParams['brand'] && queryParams['brand'].includes(el)){
           return {
             value:el,
@@ -55,52 +58,44 @@ export default createStore({
       });
 
 
-      const priceFilterListData = productCardsList.map(el => Number(el['commonParams']['price'].replace(/ /g,'')));
+      const priceFilterListData = filtersListData.map(el => el['price']);
       if(queryParams['minPrice'] && queryParams['maxPrice']){
-        filterListData.minCurrent = Number(queryParams['minPrice']);
-        filterListData.maxCurrent = Number(queryParams['maxPrice']);
+        filtersList.minCurrent = Number(queryParams['minPrice']);
+        filtersList.maxCurrent = Number(queryParams['maxPrice']);
       } else{
-        filterListData.maxCurrent = Math.max(...priceFilterListData);
-        filterListData.minCurrent = Math.min(...priceFilterListData);
+        filtersList.maxCurrent = Math.max(...priceFilterListData);
+        filtersList.minCurrent = Math.min(...priceFilterListData);
       }
-      filterListData.min = Math.min(...priceFilterListData);
-      filterListData.max = Math.max(...priceFilterListData);
+      filtersList.min = Math.min(...priceFilterListData);
+      filtersList.max = Math.max(...priceFilterListData);
 
 
-      state.filterListData = filterListData;
+      state.filtersList = filtersList;
     },
     fetchProductCard(state, productCard) {
       state.productCard = productCard;
     }
   },
   actions: {
-    async fetchCardsListAction({commit}) {
+    async fetchFiltersListAction({commit}, queryParams) {
       try {
-          const productCardsList = await ((await fetch("http://localhost:3000/products/getCards")).json());
-          commit("fetchProductCardsList", productCardsList);
+        const filtersListData = await ((await fetch("http://localhost:3000/api/getFilters")).json());
+        commit("fetchFiltersList", {filtersListData,queryParams});
       } catch (e) {
         console.log(e);
       }
     },
-    async fetchFilterListAction({commit}, queryParams) {
+    async fetchProductCardAction({commit}, routeParam) {
       try {
-        const productCardsList = await ((await fetch("http://localhost:3000/products/getCards")).json());
-        commit("fetchFilterCategoriesList", {productCardsList,queryParams});
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async fetchCardAction({commit}, routeParam) {
-      try {
-        const productCard = await ((await fetch(`http://localhost:3000/products/getCard/${routeParam}`)).json())
+        const productCard = await ((await fetch(`http://localhost:3000/api/getCard/${routeParam}`)).json())
         commit("fetchProductCard", productCard);
       } catch (e) {
         console.log(e);
       }
     },
-    async fetchFilteredCardsListAction ({commit}, queryString) {
+    async fetchProductCardsListAction ({commit}, queryString) {
       try {
-        const productCardsList = await ((await fetch("http://localhost:3000/products/filterCards/?" + queryString)).json());
+        const productCardsList = await ((await fetch("http://localhost:3000/api/getCards/?" + queryString)).json());
         commit("fetchProductCardsList", productCardsList);
       } catch (e) {
         console.log(e);

@@ -56,7 +56,7 @@ export default{
 
   },
   beforeMount() {
-    this.$store.dispatch('fetchCardAction', this.pathParam);
+    this.$store.dispatch('fetchProductCardAction', this.pathParam);
   }
 }
 </script>

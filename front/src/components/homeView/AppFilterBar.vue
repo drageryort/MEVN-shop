@@ -15,7 +15,7 @@
           width: 100px;
           margin: 3px;
         "
-      >{{ filterCategoriesList['minCurrent'] }}</span
+      >{{ filtersList['minCurrent'] }}</span
       >
       <span
           class="data_price_filed"
@@ -27,21 +27,21 @@
           width: 100px;
           margin: 3px;
         "
-      >{{ filterCategoriesList['maxCurrent'] }}</span
+      >{{ filtersList['maxCurrent'] }}</span
       >
     </div>
 
     <MultiRangeSlider
         baseClassName="multi-range-slider-bar-only"
-        :minValue="filterCategoriesList['minCurrent']"
-        :maxValue="filterCategoriesList['maxCurrent']"
-        :max="filterCategoriesList['max']"
-        :min="filterCategoriesList['min']"
+        :minValue="filtersList['minCurrent']"
+        :maxValue="filtersList['maxCurrent']"
+        :max="filtersList['max']"
+        :min="filtersList['min']"
         :step="1"
         @input="updateBarValues"
     />
     <ul class="filter_list"
-        v-for="(filterList,filterName) of filterCategoriesList['list']"
+        v-for="(filterList,filterName) of filtersList['list']"
         :key="filterName"
     >
       <span class="filter_list_title">{{filterName}}</span>
@@ -72,10 +72,10 @@ export default {
     return {}
   },
   computed:{
-    ...mapGetters(['filterCategoriesList']),
+    ...mapGetters(['filtersList']),
   },
   created() {
-    this.$store.dispatch('fetchFilterListAction', this.$route['query']);
+    this.$store.dispatch('fetchFiltersListAction', this.$route['query']);
   },
   methods: {
     formDataToObject (formData) {
@@ -94,17 +94,17 @@ export default {
       return object
     },
     updateBarValues(e) {
-      this.filterCategoriesList['minCurrent'] = e.minValue;
-      this.filterCategoriesList['maxCurrent'] = e.maxValue;
+      this.filtersList['minCurrent'] = e.minValue;
+      this.filtersList['maxCurrent'] = e.maxValue;
     },
     updateFilter () {
       const formData = new FormData(this.$refs.filterForm);
-      formData.set('minPrice', this.filterCategoriesList['minCurrent']);
-      formData.set('maxPrice', this.filterCategoriesList['maxCurrent']);
+      formData.set('minPrice', this.filtersList['minCurrent']);
+      formData.set('maxPrice', this.filtersList['maxCurrent']);
       const formDataObject = this.formDataToObject(formData);
       const queryString = new URLSearchParams(formData).toString();
       this.$router.push({ name: "HomeView", query: formDataObject });
-      this.$store.dispatch('fetchFilteredCardsListAction', queryString);
+      this.$store.dispatch('fetchProductCardsListAction', queryString);
     }
   }
 }

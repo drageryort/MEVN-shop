@@ -23,6 +23,7 @@
 import {mapGetters} from 'vuex'
 import AppProductCard from '@/components/homeView/AppProductCard'
 import AppFilterBar from '@/components/homeView/AppFilterBar'
+import { serialize } from 'object-to-formdata';
 
 export default {
   name: 'HomeView',
@@ -39,12 +40,8 @@ export default {
     }),
   },
   mounted() {
-    if (Object.keys(this.queryParam).length) {
-      const queryString = new URLSearchParams(this.queryParam).toString();
-      this.$store.dispatch('fetchFilteredCardsListAction', queryString);
-    } else {
-      this.$store.dispatch('fetchCardsListAction');
-    }
+      const queryString = new URLSearchParams(serialize(this.queryParam)).toString();
+      this.$store.dispatch('fetchProductCardsListAction', queryString);
   }
 }
 </script>

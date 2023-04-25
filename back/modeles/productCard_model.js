@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
-const todoSchema = new mongoose.Schema({
+const productCardSchema = new mongoose.Schema({
   title: String,
   imageSrc: String,
   commonParams: {
-    brand: Array
+    brand: String,
+    category: String,
+    price: Number
   },
   customParams: Object,
   url: String,
@@ -11,4 +13,4 @@ const todoSchema = new mongoose.Schema({
   promo: Boolean
 },{collection: "productCardsList"})
 
-module.exports = mongoose.model("productCardsList", todoSchema)
+module.exports = mongoose.model("productCardsList", productCardSchema)

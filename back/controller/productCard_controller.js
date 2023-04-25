@@ -1,44 +1,36 @@
-const productCard = require("../modeles/product_card_model");
+const productCard = require("../modeles/productCard_model");
 
-const getAllProductCards = async (req, res) => {
-  const allProductCards = await productCard.find();
+
+const getFilters = async (req, res) => {
+  const filtersList = await productCard.aggregate([
+    {$project: {_id: 0,commonParams: "$commonParams"}},
+    {$unwind: '$commonParams'},
+    {$replaceRoot: {newRoot: "$commonParams"}}
+
+  ]);
+
+  console.log(filtersList
+  )
+
   res.status(200);
-  res.json(allProductCards);
+  res.json(filtersList);
 };
 
-const getFilteredProductCards = async (req, res) => {
-  const filterParams = req.query
-  const productCards = await productCard.find(
-    {
-      $and: [
-        {"commonParams.brand": {$in: ['Asus']}},
-        {"commonParams.category": {$in: ['Display']}}
-      ]
-    });
-  console.log(productCards)
+const getProductCards = async (req, res) => {
+  const query = req.query;
+  let filterParams = {};
 
-  let filteredProductCards = [];
-
-  if (filterParams['minPrice'] && filterParams['maxPrice']) {
-    filteredProductCards = productCards.filter(el =>
-      Number(filterParams['minPrice'].replace(/ /g, '')) <= Number(el.commonParams['price'].replace(/ /g, '')) &&
-      Number(el.commonParams['price'].replace(/ /g, '')) <= Number(filterParams['maxPrice'].replace(/ /g, ''))
-    )
-  }
-  if (filterParams['brand'] && filteredProductCards.length) {
-    filteredProductCards = filteredProductCards.filter(el => filterParams['brand'].includes(el.commonParams['brand']))
-  } else if (filterParams['brand']) {
-    filteredProductCards = productCards.filter(el => filterParams['brand'].includes(el.commonParams['brand']))
+  for(let [key,value] of Object.entries(query)){
+    if(key === 'minPrice'){
+      filterParams[`commonParams.price`] = {$lte: query['maxPrice'], $gte: query['minPrice']}
+     } else if(key !== 'maxPrice'){
+      filterParams[`commonParams.${key}`] = {$in: value}
+    }
   }
 
-  if (filterParams['category'] && filteredProductCards.length) {
-    filteredProductCards = filteredProductCards.filter(el => filterParams['category'].includes(el.commonParams['category']))
-  } else if (filterParams['category']) {
-    filteredProductCards = productCards.filter(el => filterParams['category'].includes(el.commonParams['category']))
-  }
-
+  let productCardsList = await productCard.find(filterParams);
   res.status(200);
-  res.json(filteredProductCards);
+  res.json(productCardsList);
 };
 
 const getProductCardById = async (req, res) => {
@@ -48,7 +40,7 @@ const getProductCardById = async (req, res) => {
 };
 
 module.exports = {
-  getAllProductCards,
-  getFilteredProductCards,
+  getFilters,
+  getProductCards,
   getProductCardById
 }
