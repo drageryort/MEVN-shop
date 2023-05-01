@@ -5,12 +5,18 @@ const routes = [
   {
     path: '/',
     name: 'HomeView',
-    component: HomeView
+    component: HomeView,
+    meta:{
+      layout: 'CommonLayout'
+    }
   },
   {
     path: '/product/:id',
     name: 'ProductCardView',
-    component: () => import('../views/ProductCardView.vue')
+    component: () => import('../views/ProductCardView.vue'),
+    meta:{
+      layout: 'CommonLayout'
+    }
   }
 ]
 

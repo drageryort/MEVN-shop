@@ -9,9 +9,6 @@ const getFilters = async (req, res) => {
 
   ]);
 
-  console.log(filtersList
-  )
-
   res.status(200);
   res.json(filtersList);
 };

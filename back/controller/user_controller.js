@@ -16,7 +16,11 @@ const user_controller = {
         httpOnly: true,
 // for https
 //        secure: true
-      })
+      });
+      res.cookie("accessToken", userData.accessToken, {
+        maxAge: 30 *60 * 1000,
+        httpOnly: true,
+      });
       return res.json(userData)
 
     } catch (e){
@@ -32,7 +36,11 @@ const user_controller = {
         httpOnly: true,
 // for https
 //      secure: true
-      })
+      });
+      res.cookie("accessToken", userData.accessToken, {
+        maxAge: 30 *60 * 1000,
+        httpOnly: true,
+      });
       return res.json(userData);
     } catch (e){
       next(e);
@@ -43,6 +51,7 @@ const user_controller = {
       const {refreshToken} = req.cookies;
       const token = await UserService.logout(refreshToken);
       res.clearCookie("refreshToken");
+      res.clearCookie("accessToken");
       return res.json(token);
     } catch (e){
       next(e);
@@ -66,7 +75,11 @@ const user_controller = {
         httpOnly: true,
 // for https
 //      secure: true
-      })
+      });
+      res.cookie("accessToken", userData.accessToken, {
+        maxAge: 30 *60 * 1000,
+        httpOnly: true,
+      });
       return res.json(userData);
 
     } catch (e){

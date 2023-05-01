@@ -118,6 +118,21 @@ a, span {
   filter: grayscale(1);
 }
 
+.btn_submit {
+  display: block;
+  width: max-content;
+  padding: 10px;
+  background: var(--color-toxic-green);
+  border-radius: 3px;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-white);
+  transition: background-color 0.5s, opacity 0.5s;
+}
+.btn_submit:disabled {
+  filter: grayscale(1);
+}
+
 b, strong {
   font-weight: 700;
 }

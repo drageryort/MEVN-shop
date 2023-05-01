@@ -5,7 +5,6 @@ const TokenService = {
   validateAccesToken (token) {
     try{
       const tokenValidity = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY);
-      console.log(tokenValidity);
       return tokenValidity;
     } catch (e) {
       return null;
@@ -23,7 +22,7 @@ const TokenService = {
   generateToken(payload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET_KEY, {
       //Token life period
-      expiresIn: '30m'
+      expiresIn: '10m'
     })
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET_KEY, {
       //Token life period

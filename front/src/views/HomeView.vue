@@ -1,8 +1,5 @@
 <template>
   <div class="home">
-    <div class="home_top_bar">
-      <h1 class="home_top_bar_title">Catalog</h1>
-    </div>
     <div class="main">
       <div class="navbar">
         <AppFilterBar
@@ -48,9 +45,7 @@ export default {
 
 <style lang="scss" scoped>
 .home {
-  padding: 24px 32px;
-  background: var(--color-home-gray);
-  color: var(--color-white);
+
 
   .home_top_bar {
     display: flex;

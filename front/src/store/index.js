@@ -1,7 +1,12 @@
 import {createStore} from "vuex"
+import AuthService from "@/services/AuthService";
+import {apiUrl} from "@/http";
+import axios from "axios";
 
 export default createStore({
   state: {
+    userData: {},
+    isAuth: false,
     productCardsList: [],
     productCard: {},
     filtersList: {}
@@ -15,9 +20,16 @@ export default createStore({
     },
     filtersList(state) {
       return state.filtersList;
+    },
+    isAuth(state) {
+      return state.isAuth;
     }
   },
   mutations: {
+    fetchUserData(state, userData){
+      state.userData = userData;
+      state.isAuth = !!Object.keys(userData).length;
+    },
     fetchProductCardsList(state, productCardsList) {
       state.productCardsList = productCardsList;
     },
@@ -77,6 +89,51 @@ export default createStore({
     }
   },
   actions: {
+    async userAuthAction({commit}, {email, password}){
+      try {
+        const response = await AuthService.login(email,password);
+        localStorage.setItem('userStatus', 'authenticated');
+        commit("fetchUserData", response.data.user);
+      } catch (e){
+        console.log(e.response?.data?.message)
+      }
+    },
+    async userRegistrationAction({commit}, {email, password}){
+      try {
+        const response = await AuthService.registration(email,password);
+        localStorage.setItem('userStatus', 'authenticated');
+        commit("fetchUserData", response.data.user);
+      } catch (e){
+        console.log(e.response?.data?.message)
+      }
+    },
+    async userLogoutAction({commit}){
+      try {
+        await AuthService.logout();
+        localStorage.removeItem('userStatus');
+        commit("fetchUserData", {});
+      } catch (e){
+        console.log(e.response?.data?.message)
+      }
+    },
+    async userIsAuthAction({commit}){
+      try{
+        const response = await axios.get(`${apiUrl}/refresh_token`, {withCredentials: true});
+        localStorage.setItem('userStatus', 'authenticated');
+        commit("fetchUserData", response.data.user);
+      } catch (e) {
+        console.log(e.response?.data?.message)
+      }
+    },
+    async getUsersAction(){
+      try {
+        const response = await AuthService.getUsers();
+        console.log(response.data);
+      } catch (e){
+        console.log(e.response?.data?.message)
+      }
+    },
+
     async fetchFiltersListAction({commit}, queryParams) {
       try {
         const filtersListData = await ((await fetch("http://localhost:3000/api/getFilters")).json());

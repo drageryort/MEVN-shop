@@ -1,25 +1,28 @@
 <template>
-  <div class="layout">
-    <div class="layout-main">
-      <router-view/>
-    </div>
-  </div>
+    <component :is="'CommonLayout'"/>
 </template>
-
-<style lang="scss" scoped>
-@import './assets/styles/common/fonts/fonts.min.css';
-@import './assets/styles/common/global/global.min.css';
-
-.layout{
-
-  display: flex;
-  height: 100vh;
-  .layout-main{
-    width: calc(100% - 40px);
-    overflow-y: scroll;
-    >*{
-      min-height: 100%;
+<script>
+import CommonLayout from "@/layouts/CommonLayout";
+export default {
+  name: "App",
+  components: {
+    CommonLayout
+  },
+  computed: {
+    layout() {
+      return this.$route["meta"]["layout"]
+    }
+  },
+  created() {
+    if(localStorage.getItem('token')){
+      this.$store.dispatch('userIsAuthAction');
     }
   }
 }
+</script>
+
+
+<style lang="scss">
+@import './assets/styles/common/fonts/fonts.min.css';
+@import './assets/styles/common/global/global.min.css';
 </style>

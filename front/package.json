@@ -12,7 +12,9 @@
     "multi-range-slider-vue": "^1.1.4",
     "object-to-formdata": "^4.4.2",
     "vue": "^3.2.13",
+    "vue-axios": "^3.5.2",
     "vue-router": "^4.0.3",
+    "vuelidate": "^0.7.7",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
