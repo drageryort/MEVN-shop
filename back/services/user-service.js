@@ -8,11 +8,16 @@ const ApiError = require("../exceptions/api-error");
 
 const UserService = {
 
-  async registration(email, password) {
+  async registration(name, email, phone, password) {
     //Check is email free
-    const candidate = await UserModel.findOne({email});
-    if(candidate) {
-      throw ApiError.BadRequestError(`Пользователь с email - ${email} уже существует`);
+    //todo link in mongo
+    const candidateEmail = await UserModel.findOne({email});
+    const candidatePhone = await UserModel.findOne({phone});
+    if(candidateEmail) {
+      throw ApiError.BadRequestError(`Пользователь с таким email уже существует`);
+    }
+    if(candidatePhone) {
+      throw ApiError.BadRequestError(`Пользователь с таким номером телефона уже существует`);
     }
 
     //Prepare user data
@@ -21,7 +26,9 @@ const UserService = {
 
     //Create user
     const user = await UserModel.create({
+      name,
       email,
+      phone,
       password:hashPassword
     })
 
@@ -29,14 +36,12 @@ const UserService = {
     await MailService.sendActivationMail(email, `${process.env.URL}/api/activate/${activationLink}`);
 
     //Prepare token data
-    const userDto = new UserDto(user); //user,id, isActivated
+    const userDto = new UserDto(user);
     const tokens = TokenService.generateToken({...userDto});
 
     //Create token
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
-
     return {
-      ...tokens,
       user: userDto
     }
 
@@ -55,7 +60,7 @@ const UserService = {
   async login(email,password) {
     const user = await UserModel.findOne({email});
     if (!user){
-      throw ApiError.BadRequestError(`Пользователь с email - ${email} не найден`);
+      throw ApiError.BadRequestError(`Пользователь не найден`);
     }
     const isPassEquals = await bcrypt.compare(password,user.password);
     if(!isPassEquals) {
@@ -68,14 +73,12 @@ const UserService = {
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return {
-      ...tokens,
       user: userDto
     }
   },
 
   async logout(refreshToken) {
-    const token = await TokenService.removeToken(refreshToken);
-    return token;
+    await TokenService.removeToken(refreshToken);
   },
 
   async refresh(refreshToken){
@@ -96,7 +99,6 @@ const UserService = {
     //Create token
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
     return {
-      ...tokens,
       user: userDto
     }
 

@@ -12,7 +12,7 @@ import AppHeader from "@/components/AppHeader";
 
 export default {
   name: "CommonLayout",
-  components: {AppHeader}
+  components: { AppHeader}
 }
 </script>
 
