@@ -1,4 +1,4 @@
-# biz24
+# MEVN Shop
 
 Project build on Vue3 CLI + Vuex + Vue Router
 Project (Add/Edit page) need to be decomposed
